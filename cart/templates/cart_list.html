@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart List</title>
+</head>
+<body>
+    <h1>Cart List</h1>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% if products %}
+        <div>
+           
+            <ul class="product_list">
+                {% for p in products %}
+                <li>
+                    <span>
+                        {% if p.thumbnail %}
+                        <img height='50' src="{{ p.thumbnail.url }}" alt="{{ p.name}}">
+                        {% endif %}
+                    </span>
+                    <span>{{ p.name}}</span>
+                    <span>{{ p.price}}</span>
+                    <span>
+                        <button type="button" onclick="decreaseQuantity({{ p.id}})">-</button>
+                        <input type="number"name="quantity" min="0" step="1" max="10" value="{{ p.quantity}}">
+                        <button type="button" onclick="increaseQuantity({{ p.id}})">+</button>
+                    </span>
+                    <span>{{ p.amount}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <div>Total: <strong>{{ total }}</strong></div>
+        </div>
+        <div>
+            {% csrf_token %}
+            <button type="button" class="btn btn-primary" onclick="cartCheckout()">Thanh toán</button>
+        </div>
+    {% else %}
+        <p>Không có sản phẩm nào trong giỏ hàng.</p>
+        <button type="button" onclick="goHome()">Trang chủ</button>
+    {% endif %}
+    <script>
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const decreaseQuantity = async (id)=>{
+            console.log(id);
+            try
+            {
+                const response = await fetch('/cart/decrease-quantity/', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRFToken': csrftoken
+                    },
+                    mode: 'same-origin', // Do not send CSRF token to another domain.
+                    cache: "no-cache",
+                    body: JSON.stringify({id: id}), // body data type must match "Content-Type" header
+                });
+                const results = await response.json();
+               
+                if(!results.success){
+                    console.log(results.message);
+                }
+                window.location.href = '/cart/';
+            } catch (error) {
+                console.error(`Error: `,error);
+            }
+        }
+
+        const increaseQuantity = async (id)=>{
+            console.log(id);
+
+            try
+            {
+                const response = await fetch('/cart/increase-quantity/', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRFToken': csrftoken
+                    },
+                    mode: 'same-origin', // Do not send CSRF token to another domain.
+                    cache: "no-cache",
+                    body: JSON.stringify({id: id}), // body data type must match "Content-Type" header
+                });
+                const results = await response.json();
+               
+                if(!results.success){
+                    console.log(results.message);
+                }
+                window.location.href = '/cart/';
+
+            } catch (error) {
+                console.error(`Error: `,error);
+            }
+        }
+        const cartCheckout = ()=>{
+            window.location.href = '/cart/checkout/';
+        }
+    </script>
+</body>
+</html>

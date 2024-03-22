@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+</head>
+<body>
+    <h1>Product Detail</h1>
+    <h2>{{ product.product_name }}</h2>
+    <p>Price: {{ product.price }}</p>
+    <div>
+        {% csrf_token %}
+        <button class="btn_buy_now" type="button" onclick="buyNow()">Mua Ngay</button>
+    </div>
+    <script src="{% static 'js/cart.js' %}"></script>
+    <script>
+        const id = {{ product.id }};
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const buyNow = async ()=>{
+           console.log(id,csrftoken);
+           const data = {
+            id: id,
+            product_name: "{{ product.product_name }}",
+            price: {{ product.price }},
+            discount: {{ product.discount }},
+            quantity: 1,
+            thumbnail: "{{ product.thumbnail }}"
+        };
+           try
+            {
+                const response = await fetch('/cart/add-item/', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRFToken': csrftoken
+                    },
+                    mode: 'same-origin', // Do not send CSRF token to another domain.
+                    body: JSON.stringify(data), // body data type must match "Content-Type" header
+                });
+                const results = await response.json();
+               
+                if(!results.success){
+                    console.log(results.message);
+                }
+                alert(results.message || 'Thêm giỏ hàng thành công !');
+
+            } catch (error) {
+                console.error(`Error: `,error);
+            }
+        }
+    </script>
+</body>
+</html>

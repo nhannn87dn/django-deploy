@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Checkout</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+</head>
+<body>
+    <h1>Cart Checkout</h1>
+    <div id="cart_list">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% if products %}
+        <div>
+           
+            <ul class="product_list">
+                {% for p in products %}
+                <li>
+                    <span>
+                        {% if p.thumbnail %}
+                        <img height='50' src="{{ p.thumbnail.url }}" alt="{{ p.name}}">
+                        {% endif %}
+                    </span>
+                    <span>{{ p.name}}</span>
+                    <span>{{ p.price}}</span>
+                    <span>
+                        {{ p.quantity}}
+                    </span>
+                    <span>{{ p.amount}}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <div>Total: <strong>{{ total }}</strong></div>
+        </div>
+        
+    {% else %}
+        <p>Không có sản phẩm nào trong giỏ hàng.</p>
+        <button type="button" onclick="goHome()">Trang chủ</button>
+    {% endif %}
+    </div>
+    
+    <div id="customer_info">
+
+        <form class="form" action="/cart/checkout/" method="POST">
+            <div id="hidden_fields"></div>
+            {# Include the hidden fields #}
+            {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+            {% endfor %}
+            {# Include the visible fields #}
+            {% for field in form.visible_fields %}
+                <div class="field_wrapper {% if field.errors %} has_errors {% endif %}">
+                    {{ field.label_tag }} 
+                    <div class="field_item">
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                        <p class="field_help" id="{{ field.auto_id }}_helptext">
+                            {{ field.help_text|safe }}
+                        </p>
+                        {% endif %}
+                        {% if field.errors %}
+                        <div class="field_error" id="{{ field.auto_id }}__errors">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            <div>
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Đặt hàng</button>
+            </div>
+        </form>
+    </div>
+   
+    
+    </script>
+</body>
+</html>
