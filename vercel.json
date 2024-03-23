@@ -18,6 +18,5 @@
           "src": "/(.*)",
           "dest": "bikestore/wsgi.py"
       }
-  ],
-  "outputDirectory": "static"
+  ]
 }
