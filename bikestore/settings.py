@@ -100,7 +100,7 @@ EMAIL_HOST_PASSWORD = 'bhvksgtrvzrsukqk'
 
 DATABASES = {
     
-    "default": dj_database_url.parse(os.environ.get("POSTGRES_URL"))
+    "default": dj_database_url.parse('os.environ.get("POSTGRES_URL")')
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
