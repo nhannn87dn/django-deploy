@@ -28,12 +28,13 @@ url: là route
 include: là nạp app vào để hiển thị cho URL đó
 """
 urlpatterns = [
-    path('', include("home.urls")),
-    path('admin/', admin.site.urls),
-    path('products/', include('product.urls')),
-    path('cart/', include('cart.urls')),
+    path('', include("home.urls")),  # trang chủ
+    path('admin/', admin.site.urls),  # trang admin
+    path('products/', include('product.urls')),  # trang sản phẩm
+    path('customers/', include('customer.urls')),  # trang khách hàng
+    path('cart/', include('cart.urls')),  # trang giỏ hàng
     re_path(r'ckeditor/', include('ckeditor_uploader.urls')),
-] 
+]
 
 """
 path(route, view, kwargs=None, name=None)
@@ -44,8 +45,6 @@ path(route, view, kwargs=None, name=None)
 - name giúp bạn đặt tên cho URL để bạn có thể tham chiếu đến nó sau này.
 """
 
-
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    

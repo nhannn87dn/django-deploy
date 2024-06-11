@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    My first name is {{ categories.id }}. My last name is {{ categories.name }}.
-</body>
-</html>
+{% extends "default-layout.html" %}
+
+{% block title %}
+HOme Page
+{% endblock %}
+
+{% block content %}
+   My first name is {{ categories.id }}. My last name is {{ categories.name }}.
+{% endblock %}

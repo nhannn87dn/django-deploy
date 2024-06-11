@@ -1,16 +1,30 @@
+{% extends "default-layout.html" %}
+<!--===========--LOAD STATIC---==============-->
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Detail</title>
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
-    <link rel="stylesheet" href="{% static 'css/product.css' %}">
-</head>
-<body>
-    <h1>Product Detail</h1>
+<!--===========--META TITLE---==============-->
+{% block title %}
+Product Detail
+{% endblock %}
+<!--===========--END META TITLE---==============-->
+
+<!--===========--CSS---==============-->
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/product-detail.css' %}">
+{% endblock %}
+<!--===========--END CSS---==============-->
+
+<!--===========--BEGIN CONTENT---==============-->
+{% block content %}
+    <!--Load tài nguyên tĩnh-->
+    {% load static %}
+   <h1>Product Detail</h1>
     <h2>{{ product.product_name }}</h2>
+    <div style="width: 400px;height: 400px;background-color: #f3f3f3">
+        {% if product.thumbnail %}
+         <img height="400" width="auto" src="{{ product.thumbnail.url }}" alt="{{ product.product_name }}">
+        {% endif %}
+
+    </div>
     <p>Price: {{ product.price }}</p>
     <div>
         {% csrf_token %}
@@ -43,7 +57,7 @@
                     body: JSON.stringify(data), // body data type must match "Content-Type" header
                 });
                 const results = await response.json();
-               
+
                 if(!results.success){
                     console.log(results.message);
                 }
@@ -54,5 +68,5 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}
+<!--===========--END CONTENT---==============-->

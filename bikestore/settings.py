@@ -13,6 +13,9 @@ import dj_database_url
 import os
 from pathlib import Path
 
+# Add by nhannn87dn
+APP_MODE = os.getenv('APP_MODE', 'development')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,14 +28,13 @@ SECRET_KEY = 'django-insecure-7b$f#@)jrvbti6u4*2-_a&4$rx)*+dpld-6-x@xl$#)7z=8&(0
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# Production Mode
-DEBUG = False
-ALLOWED_HOSTS = ['*']
-
-
-# Dev Mode
-# DEBUG = True
-# ALLOWED_HOSTS = []
+if APP_MODE == 'production':
+    # Production Mode
+    DEBUG = False
+    ALLOWED_HOSTS = ['*']
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -43,14 +45,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    ##
+    ## Bootstrap
+    'bootstrap5',
+    'fontawesomefree',
+    ## app your self
     'cart',
     'home',
     'staff',
     'category',
     'brand',
     'product',
-    ##
+    'customer',
+    'order',
+    ## ckeditor
     'ckeditor',
     'ckeditor_uploader',
 ]
@@ -71,7 +78,7 @@ ROOT_URLCONF = 'bikestore.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], #Cấu hình templates chung cho các app
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -98,9 +105,26 @@ EMAIL_HOST_PASSWORD = 'bhvksgtrvzrsukqk'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
+# Lựa chọn Database dự vào biến môi trường
+
+if APP_MODE == 'development':
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "BikeStoresDjango",
+            "USER": "postgres",
+            "PASSWORD": "123456789",
+            "HOST": "localhost",
+            "PORT": "5432",
+        }
+    }
+elif APP_MODE == 'production':
+    DATABASES = {
+    "default": dj_database_url.parse('postgres://bikestoredjango_user:4OoSjAq1q3qWKlHWuBPADiPQmSoXz1gB@dpg-cnu072nsc6pc7392huf0-a.singapore-postgres.render.com/bikestoredjango')
+}
+#DATABASES = {
     
-    "default": dj_database_url.parse(os.environ.get("POSTGRES_URL"))
+    # "default": dj_database_url.parse('postgres://bikestoredjango_user:4OoSjAq1q3qWKlHWuBPADiPQmSoXz1gB@dpg-cnu072nsc6pc7392huf0-a.singapore-postgres.render.com/bikestoredjango')
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
@@ -114,7 +138,7 @@ DATABASES = {
     #     "HOST": "localhost",
     #     "PORT": "5432",
     # }
-}
+#}
 
 #Chỉ định lại Model xác thực cho Django
 AUTH_USER_MODEL = 'staff.Staff'
